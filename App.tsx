@@ -9,6 +9,18 @@ import { createStackNavigator } from 'react-navigation-stack';
 import Button from '@ant-design/react-native/lib/button';
 
 class HomeScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Home',
+        headerStyle: {
+            backgroundColor: '#3a45f4',
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        },
+    };
+
+
     state = {
         theme: null,
         currentTheme: null,
@@ -40,8 +52,11 @@ class HomeScreen extends React.Component {
         return (
             <Provider theme={theme}>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                    <Text>Home Screen</Text>
-                    <Button type='primary' onPress={() => this.props.navigation.navigate('Details')}>
+                    <Text>Home Screen1</Text>
+                    <Button type='primary' onPress={() => this.props.navigation.navigate('Details', {
+                        itemId: 86,
+                        otherParam: 'anything you want here',
+                    })}>
                         Go to Details
                     </Button>
                 </View>
@@ -51,10 +66,28 @@ class HomeScreen extends React.Component {
 }
 
 class DetailsScreen extends React.Component {
+    static navigationOptions = ({ navigation }) => {
+        return {
+            title: navigation.getParam('otherParam', 'A Nested Details Screen'),
+        };
+    };
+
     render() {
+        const { navigation } = this.props;
+        const itemId = navigation.getParam('itemId', 'NO-ID');
+        const otherParam = navigation.getParam('otherParam', 'some default value');
+
         return (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Text>Details Screen</Text>
+                <Text>itemId: {JSON.stringify(itemId)}</Text>
+                <Text>otherParam: {JSON.stringify(otherParam)}</Text>
+
+                <Button onPress={() => this.props.navigation.push('Details')}>
+                    Go to Details... again
+                </Button>
+                <Button onPress={() => this.props.navigation.navigate('Home')}>Go to Home</Button>
+                <Button onPress={() => this.props.navigation.goBack()}>Go back</Button>
             </View>
         );
     }
@@ -71,6 +104,15 @@ const AppNavigator = createStackNavigator(
     },
     {
         initialRouteName: 'Home',
+        defaultNavigationOptions: {
+            headerStyle: {
+                backgroundColor: '#f4511e',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+        },
     });
 const AppContainer = createAppContainer(AppNavigator);
 
